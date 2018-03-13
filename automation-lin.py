@@ -19,13 +19,13 @@ if ErpmEnv.lower() == 'NCD'.lower():
    Authenticator = "vcloudqa-int"
 elif ErpmEnv.lower() == 'other'.lower():
    Authenticator = "cloudops-int"
-   NCSDC = input("Please Enter DataCenter location. Valid options are AN,SC,UK")
+   NCSDC = input("Please Enter DataCenter location. Valid options are AN,SC,UK :\n")
    if NCSDC.lower() == 'AN'.lower():
-      URL = 'https://anderpm.cloudops-int.net/ERPMWebService/AuthService.svc/REST'
+      URL = 'https://anderpm.cloudops-int.net/ERPMWebService/AuthService.svc/REST/'
    elif NCSDC.lower() == 'SC'.lower():
-      URL = 'https://scerpm.cloudops-int.net/ERPMWebService/AuthService.svc/REST'
-   elif NSCDC.lower() == 'UK'.lower():
-      URL = 'https://ukerpm.cloudops-int.net/ERPMWebService/AuthService.svc/REST'
+      URL = 'https://scerpm.cloudops-int.net/ERPMWebService/AuthService.svc/REST/'
+   elif NCSDC.lower() == 'UK'.lower():
+      URL = 'https://ukerpm.cloudops-int.net/ERPMWebService/AuthService.svc/REST/'
    else:
       print("%s is not a valid option" %str(NCSDC))
       exit(0)
@@ -106,10 +106,23 @@ def mgmtset():
             print("Validation completed, Management Set " + i["Value"] + " exists.\n")
         else:
             print("Management Set %s does not exit" % str(mgmtname))
-            a = False
-            logout()
-            sys.exit()
-
+            if ErpmEnv.lower() == 'other':
+                print("Plesae confirm if you want to add new management set:\n")
+                createnewmgmt = input(print("Press 'Y' to create new management set or Press 'N' to quit:\n"))
+                if createnewmgmt.lower() == 'y':
+                    newmgmtdata = {"AuthenticationToken":token, "ManagementSetName":mgmtname}
+                    newmgmt = request.post(MgmtListURL, data=json.dumps(newmgmtdata),verify=False)
+                    print(newmgmt.json())
+                elif newmgmt.lower() == 'n':
+                    a = False
+                    logout()
+                    sys.exit()
+                else:
+                    print("%s is not a valid option" %str(createnewmgmt))
+            else:
+                a = False
+                logout()
+                sys.exit()
 # function to verify servers' existance in mangement set
 
 def verifyserver():
